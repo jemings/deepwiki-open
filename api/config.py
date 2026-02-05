@@ -51,6 +51,9 @@ WIKI_AUTH_CODE = os.environ.get('DEEPWIKI_AUTH_CODE', '')
 # Embedder settings
 EMBEDDER_TYPE = os.environ.get('DEEPWIKI_EMBEDDER_TYPE', 'openai').lower()
 
+# Default provider override (takes precedence over generator.json)
+DEFAULT_PROVIDER = os.environ.get('DEEPWIKI_DEFAULT_PROVIDER', None)
+
 # Get configuration directory from environment variable, or use default if not set
 CONFIG_DIR = os.environ.get('DEEPWIKI_CONFIG_DIR', None)
 
@@ -336,7 +339,12 @@ lang_config = load_lang_config()
 
 # Update configuration
 if generator_config:
-    configs["default_provider"] = generator_config.get("default_provider", "google")
+    # Use environment variable if set, otherwise use value from generator.json
+    if DEFAULT_PROVIDER:
+        configs["default_provider"] = DEFAULT_PROVIDER
+        logger.info(f"Using default_provider from environment: {DEFAULT_PROVIDER}")
+    else:
+        configs["default_provider"] = generator_config.get("default_provider", "google")
     configs["providers"] = generator_config.get("providers", {})
 
 # Update embedder configuration

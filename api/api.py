@@ -164,6 +164,15 @@ async def validate_auth_code(request: AuthorizationConfig):
     """
     return {"success": WIKI_AUTH_CODE == request.code}
 
+@app.get("/api/env-config")
+async def get_env_config():
+    """
+    Get environment configuration like default GitHub token.
+    """
+    return {
+        "github_token": os.environ.get("GITHUB_TOKEN", "")
+    }
+
 @app.get("/models/config", response_model=ModelConfig)
 async def get_model_config():
     """

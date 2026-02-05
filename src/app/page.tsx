@@ -173,6 +173,27 @@ export default function Home() {
     fetchAuthStatus();
   }, []);
 
+  // Fetch default GitHub token from environment
+  useEffect(() => {
+    const fetchEnvConfig = async () => {
+      try {
+        const response = await fetch('/api/env-config');
+        if (!response.ok) {
+          return; // Silently fail, use empty token
+        }
+        const data = await response.json();
+        if (data.github_token && !accessToken) {
+          setAccessToken(data.github_token);
+        }
+      } catch (err) {
+        console.error("Failed to fetch env config:", err);
+        // Silently fail, use empty token
+      }
+    };
+
+    fetchEnvConfig();
+  }, []);
+
   // Parse repository URL/input and extract owner and repo
   const parseRepositoryInput = (input: string): {
     owner: string,
